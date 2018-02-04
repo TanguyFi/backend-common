@@ -1,3 +1,8 @@
+/*
+  TODO Maybe rename file in withLogger
+  available for object with functions
+*/
+
 export default function withLogger(logger) {
   return function buildLoggedService({ serviceName, service }) {
     // somewhere else in the dispatcher ...?

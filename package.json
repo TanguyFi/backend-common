@@ -25,7 +25,9 @@
   },
   "dependencies": {
     "es6-error": "^4.1.1",
-    "isomorphic-fetch": "^2.2.1"
+    "fetch-cookie": "^0.7.0",
+    "isomorphic-fetch": "^2.2.1",
+    "tough-cookie": "^2.3.3"
   },
   "lint-staged": {
     "*.js": [
