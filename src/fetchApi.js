@@ -1,20 +1,21 @@
 import isoFetch from 'isomorphic-fetch';
 import fetchWithCookieBuilder from 'fetch-cookie';
 import { CookieJar } from 'tough-cookie';
+import { omit } from 'ramda';
 
 const cookieJar = new CookieJar();
 const fetchWithCookie = fetchWithCookieBuilder(isoFetch, cookieJar);
 
 async function fetchServer(url, options) {
   const fetch = options.cookie ? fetchWithCookie : isoFetch;
+  const fetchOptions = omit(['cookie'], options);
 
   const result = await fetch(url, {
-    method: options.method,
+    ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...fetchOptions.headers,
     },
-    body: options.body,
   });
   const body = await result.json();
   if (!result.ok) {

@@ -21,13 +21,16 @@
     "husky": "^0.14.3",
     "jest": "^22.0.4",
     "lint-staged": "^6.1.0",
+    "nodemon": "^1.14.12",
     "prettier": "1.10.2"
   },
   "dependencies": {
     "es6-error": "^4.1.1",
     "fetch-cookie": "^0.7.0",
     "isomorphic-fetch": "^2.2.1",
-    "tough-cookie": "^2.3.3"
+    "ramda": "^0.25.0",
+    "tough-cookie": "^2.3.3",
+    "winston": "3.0.0-rc1"
   },
   "lint-staged": {
     "*.js": [
@@ -44,6 +47,7 @@
     "check": "flow check",
     "test": "jest /src",
     "build": "BABEL_ENV=production babel src/ -d lib",
+    "watch": "BABEL_ENV=production babel --watch src/ -d lib",
     "prepublish": "npm run build"
   }
 }
