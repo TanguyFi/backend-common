@@ -16,3 +16,12 @@ export function assertInternal(schema, object) {
   }
   return value;
 }
+
+export function assertTest(schema, object) {
+  const { error, value } = schema.validate(object, { abortEarly: false });
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return value;
+}

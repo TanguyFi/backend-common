@@ -1,3 +1,12 @@
+import uuid from 'uuid';
+
+export function addRequestId() {
+  return function addRequestIdMiddleware(req, res, next) {
+    req.requestId = uuid();
+    next();
+  };
+}
+
 export function errorHandlerMiddleware(logger) {
   return function errorHandler(err, req, res, next) {
     if (res.headersSent) {
