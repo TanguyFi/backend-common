@@ -1,5 +1,9 @@
 import { ValidationError, InternalError } from './errors';
 
+/*
+ * Encapsulate Joi https://github.com/hapijs/joi/blob/v13.0.2/API.md
+ */
+
 export function assertInput(schema, inputValue) {
   const { error, value } = schema.validate(inputValue);
   if (error) {
@@ -24,4 +28,8 @@ export function assertTest(schema, object) {
   }
 
   return value;
+}
+
+export function format(schema, object) {
+  return assertInternal(schema, object);
 }
