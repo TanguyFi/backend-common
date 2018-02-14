@@ -6,13 +6,20 @@ const logger = winston.createLogger({
   transports: [],
 });
 
-const { NODE_ENV } = process.env;
+const { NODE_ENV, DEBUG } = process.env;
+function getLevel() {
+  if (DEBUG === 'true') {
+    return 'debug';
+  }
+  return NODE_ENV === 'test' ? 'warn' : 'info';
+}
+
 if (NODE_ENV === 'production') {
   logger.add(new winston.transports.Console());
 } else {
   logger.add(
     new winston.transports.Console({
-      level: NODE_ENV === 'test' ? 'warn' : 'info',
+      level: getLevel(),
       format: winston.format.combine(
         winston.format.simple(),
         winston.format.timestamp(),
