@@ -36,6 +36,7 @@ export function errorHandlerMiddleware(logger) {
 
 export function logRequestMiddleware(logger) {
   return function logRequest(req, res, next) {
+    next();
     const message = `${res.statusCode} ${req.method} ${req.originalUrl}`;
     const data = {
       requestId: req.requestId,
@@ -50,6 +51,17 @@ export function logRequestMiddleware(logger) {
     } else {
       logger.info(message, data);
     }
-    next();
+  };
+}
+
+export function notFoundMiddleware() {
+  return function notFound(req, res, next) {
+    if (!res.headersSent) {
+      res.status(404).json({
+        error: `${req.method} ${req.originalUrl}: Not found`,
+      });
+    }
+
+    return next();
   };
 }
