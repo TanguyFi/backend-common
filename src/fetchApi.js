@@ -2,6 +2,7 @@ import isoFetch from 'isomorphic-fetch';
 import fetchWithCookieBuilder from 'fetch-cookie';
 import { CookieJar } from 'tough-cookie';
 import { omit } from 'ramda';
+import { DomainError } from './errors';
 
 const cookieJar = new CookieJar();
 const fetchWithCookie = fetchWithCookieBuilder(isoFetch, cookieJar);
@@ -11,6 +12,7 @@ async function fetchServer(url, options) {
   const fetchOptions = omit(['cookie'], options);
 
   const result = await fetch(url, {
+    // TODO ramda deep merge
     ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',
@@ -19,7 +21,16 @@ async function fetchServer(url, options) {
   });
   const body = await result.json();
   if (!result.ok) {
-    throw new Error(`${result.status} ${result.statusText} ${body.error}`);
+    if (result.status === 400) {
+      // TODO improve
+      throw new DomainError(
+        body.error.message,
+        body.error.errorCode,
+        body.error.payload,
+      );
+    } else {
+      throw new Error(`${result.status} ${result.statusText} ${body.error}`);
+    }
   }
   return body;
 }

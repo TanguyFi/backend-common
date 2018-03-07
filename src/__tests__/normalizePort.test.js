@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import normalizePort from '../normalizePort';
 
 describe('normalizePort(port)', () => {

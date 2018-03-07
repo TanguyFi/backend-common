@@ -8,6 +8,7 @@ export function addRequestId() {
 }
 
 export function errorHandlerMiddleware(logger) {
+  const BAD_JSON = 'BAD_JSON';
   return function errorHandler(err, req, res, next) {
     if (res.headersSent) {
       return next(err);
@@ -15,13 +16,19 @@ export function errorHandlerMiddleware(logger) {
 
     if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
       res.statusCode = 400;
-      res.json({ error: err.message });
+      res.json({
+        error: {
+          message: err.message,
+          errorCode: BAD_JSON,
+          payload: null,
+        },
+      });
     } else {
       switch (err.name) {
         case 'ValidationError':
         case 'DomainError':
           res.statusCode = 400;
-          res.json({ error: err.message });
+          res.json({ error: err.toObject() });
           break;
         default:
           logger.error(err.stack, { requestId: req.requestId });
