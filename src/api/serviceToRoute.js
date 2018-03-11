@@ -14,8 +14,7 @@ function serviceToRoute(serviceFunction) {
       };
     }
 
-    const context = { user: req.user, requestId: req.requestId };
-    serviceFunction(args, context)
+    serviceFunction(args, req.context)
       .then(serviceResult => res.json(serviceResult))
       .then(() => next())
       .catch(next);
