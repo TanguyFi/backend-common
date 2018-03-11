@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 
-export function addRequestId() {
-  return function addRequestIdMiddleware(req, res, next) {
+export function addRequestIdMiddleware() {
+  return function addRequestId(req, res, next) {
     req.requestId = uuid();
     next();
   };
