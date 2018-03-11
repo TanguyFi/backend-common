@@ -72,3 +72,20 @@ export function notFoundMiddleware() {
     return next();
   };
 }
+
+export function debug() {
+  const DEBUG_THROW_HEADER = 'DEBUG-THROW';
+  const DEBUG_DELAY_HEADER = 'DEBUG-DELAY';
+  if (process.env.NODE_ENV === 'production') {
+    return (req, res, next) => next();
+  }
+
+  return function debugMiddleware(req, res, next) {
+    const shouldThrow = !!req.get(DEBUG_THROW_HEADER);
+    const delayDuration = Number(req.get(DEBUG_DELAY_HEADER) || 0);
+
+    new Promise(resolve => setTimeout(resolve, delayDuration)).then(() => {
+      next(shouldThrow ? new Error() : undefined);
+    });
+  };
+}
