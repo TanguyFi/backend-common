@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { DomainError, ValidationError } from '../errors';
 
 export function addRequestIdMiddleware() {
   return function addRequestId(req, res, next) {
@@ -23,18 +24,13 @@ export function errorHandlerMiddleware(logger) {
           payload: null,
         },
       });
+    } else if (err instanceof DomainError || err instanceof ValidationError) {
+      res.statusCode = 400;
+      res.json({ error: err.toObject() });
     } else {
-      switch (err.name) {
-        case 'ValidationError':
-        case 'DomainError':
-          res.statusCode = 400;
-          res.json({ error: err.toObject() });
-          break;
-        default:
-          logger.error(err.stack, { requestId: req.requestId });
-          res.statusCode = 500;
-          res.json({ error: `${req.requestId}` });
-      }
+      logger.error(err.stack, { requestId: req.requestId });
+      res.statusCode = 500;
+      res.json({ error: `${req.requestId}` });
     }
 
     return next();
@@ -51,7 +47,6 @@ export function logRequestMiddleware(logger) {
       url: req.originalUrl,
       statusCode: res.statusCode,
       headers: req.headers,
-      body: req.body,
     };
     if (res.statusCode === 500) {
       logger.error(message, data);

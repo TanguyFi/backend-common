@@ -1,31 +1,18 @@
 import ExtendableError from 'es6-error';
 
 export class DefaultError extends ExtendableError {
-  constructor(message, payload) {
-    super(message);
-    this.payload = payload;
-  }
-
-  toObject() {
-    return {
-      message: this.message,
-      payload: this.payload,
-    };
-  }
-}
-
-export class DomainError extends DefaultError {
   constructor(
     message = '',
-    errorCode = DomainError.ERROR_CODE,
+    errorCode = DefaultError.ERROR_CODE,
     payload = null,
   ) {
-    super(message, payload);
+    super(message);
+    this.payload = payload;
     this.errorCode = errorCode;
   }
 
   static get ERROR_CODE() {
-    return 'DOMAIN_ERROR';
+    return 'DEFAULT_ERROR';
   }
 
   toObject() {
@@ -37,7 +24,9 @@ export class DomainError extends DefaultError {
   }
 }
 
-export class ValidationError extends DomainError {
+export class DomainError extends DefaultError {}
+
+export class ValidationError extends DefaultError {
   constructor(errors, object) {
     super('Validation error', ValidationError.ERROR_CODE, {
       errors,
@@ -50,7 +39,15 @@ export class ValidationError extends DomainError {
   }
 }
 
-export class InternalError extends DefaultError {}
+export class InternalError extends DefaultError {
+  constructor(message, payload) {
+    super(message, InternalError.ERROR_CODE, payload);
+  }
+
+  static get ERROR_CODE() {
+    return 'INTERNAL_ERROR';
+  }
+}
 
 export function only(SpecificError, handler) {
   return function onlyHandler(error) {

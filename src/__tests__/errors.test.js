@@ -8,42 +8,44 @@ import {
 
 describe('different types of error', () => {
   describe('DefaultError', () => {
-    test('should accept message and payload', () => {
+    test('should accept message, errorCode, payload', () => {
       const message = 'This a test message';
+      const errorCode = 'TEST_ERROR';
       const payload = { a: 1 };
       try {
-        throw new DefaultError(message, payload);
+        throw new DefaultError(message, errorCode, payload);
       } catch (error) {
         expect(error.message).toEqual(message);
+        expect(error.errorCode).toEqual(errorCode);
         expect(error.payload).toEqual(payload);
-        expect(error.toObject()).toEqual({ message, payload });
+        expect(error.toObject()).toEqual({
+          message,
+          errorCode,
+          payload,
+        });
       }
     });
   });
 
   describe('DomainError', () => {
-    test('should be a DefaultError and have a errorCode', () => {
+    test('should be a DefaultError', () => {
       const message = 'This a test message';
-      const payload = { a: 1 };
       const errorCode = 'TEST_ERROR';
+      const payload = { a: 1 };
       try {
         throw new DomainError(message, errorCode, payload);
       } catch (error) {
         expect(error instanceof DefaultError).toBe(true);
-        expect(error.message).toEqual(message);
-        expect(error.payload).toEqual(payload);
-        expect(error.errorCode).toEqual(errorCode);
-        expect(error.toObject()).toEqual({ message, payload, errorCode });
       }
     });
   });
 
   describe('ValidationError', () => {
-    test('sould be a instance of DomainError', () => {
+    test('sould be a DefaultError', () => {
       try {
-        throw new ValidationError({});
+        throw new ValidationError({}, {});
       } catch (error) {
-        expect(error instanceof DomainError).toBe(true);
+        expect(error instanceof DefaultError).toBe(true);
         expect(error.errorCode).toEqual(ValidationError.ERROR_CODE);
       }
     });

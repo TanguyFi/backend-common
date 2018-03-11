@@ -1,5 +1,5 @@
 import { assocPath } from 'ramda';
-import { ValidationError, InternalError } from './errors';
+import { InternalError, ValidationError } from './errors';
 
 /*
  * Encapsulate Joi https://github.com/hapijs/joi/blob/v13.0.2/API.md
