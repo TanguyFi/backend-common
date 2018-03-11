@@ -2,9 +2,10 @@ import { EventEmitter } from 'events';
 import { without } from 'ramda';
 
 class Service {
-  constructor(serviceName, { logger }) {
+  constructor(serviceName, { logger }, logConfig = {}) {
     this.serviceName = serviceName;
     this.logger = logger;
+    this.logConfig = logConfig;
     this.bus = new EventEmitter();
 
     without(
@@ -15,7 +16,10 @@ class Service {
       if (typeof property === 'function') {
         const f = property.bind(this);
         this[propertyName] = (...args) => {
-          const argsView = args.length > 1 ? args : args[0];
+          const defaultArgView = args.length > 1 ? args : args[0];
+          const argsView = logConfig[propertyName]
+            ? logConfig[propertyName](...args)
+            : defaultArgView;
           logger.info(`Call ${serviceName}.${propertyName}`, argsView);
           return f(...args);
         };
