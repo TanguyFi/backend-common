@@ -10,6 +10,10 @@ describe('mask(attributes)', () => {
       test: expect.stringMatching(/\*+/),
     });
   });
+  it('should not add attributes', () => {
+    const input = {};
+    expect(mask(['test'])(input)).toEqual({});
+  });
 });
 
 describe('maskArgs(attributes)', () => {
