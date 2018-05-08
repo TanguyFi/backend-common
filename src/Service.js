@@ -18,7 +18,7 @@ class Service {
         this[propertyName] = (...args) => {
           const defaultArgView = args.length > 1 ? args : args[0];
           const argsView = logConfig[propertyName]
-            ? logConfig[propertyName](...args)
+            ? logConfig[propertyName](args)
             : defaultArgView;
           logger.info(`Call ${serviceName}.${propertyName}`, argsView);
           return f(...args);

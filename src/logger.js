@@ -1,4 +1,5 @@
 import winston from 'winston';
+import { assocPath } from 'ramda';
 
 const logger = winston.createLogger({
   level: 'info',
@@ -26,6 +27,25 @@ if (NODE_ENV === 'production') {
       ),
     }),
   );
+}
+
+const MASK = '*************';
+export function mask(attributes) {
+  const maskedAttributes = Array.isArray(attributes)
+    ? attributes
+    : [attributes];
+  return function maskAttributes(input) {
+    return maskedAttributes.reduce((obj, attribute) => {
+      const attributePath = attribute.split('.');
+      return assocPath(attributePath, MASK, obj);
+    }, input);
+  };
+}
+
+export function maskArgs(attributes) {
+  return function maskAttributesArgs([arg0, ...args]) {
+    return [mask(attributes)(arg0), ...args];
+  };
 }
 
 export default logger;
