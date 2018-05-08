@@ -25,10 +25,15 @@ export function assertInternal(schema, object) {
   const { error, value } = schema.validate(object);
   if (error) {
     const errors = transformJoiError(error);
-    throw new InternalError('Internal validation error', {
-      errors,
-      object,
-    });
+    throw new InternalError(
+      `Internal validation error
+errors: ${JSON.stringify(errors, null, 2)}
+object: ${JSON.stringify(object, null, 2)}`,
+      {
+        errors,
+        object,
+      },
+    );
   }
   return value;
 }
