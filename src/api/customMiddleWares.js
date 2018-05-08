@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { omit } from 'ramda';
 import { DomainError, ValidationError } from '../errors';
 
 export function addRequestIdMiddleware() {
@@ -46,7 +47,7 @@ export function logRequestMiddleware(logger) {
       method: req.method,
       url: req.originalUrl,
       statusCode: res.statusCode,
-      headers: req.headers,
+      headers: omit(['cookie'], req.headers),
     };
     if (res.statusCode === 500) {
       logger.error(message, data);
