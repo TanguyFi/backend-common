@@ -24,7 +24,15 @@ export class DefaultError extends ExtendableError {
   }
 }
 
-export class DomainError extends DefaultError {}
+export class DomainError extends DefaultError {
+  constructor(message, errorCode = DomainError.ERROR_CODE, payload = null) {
+    super(message, errorCode, payload);
+  }
+
+  static get ERROR_CODE() {
+    return 'DOMAIN_ERROR';
+  }
+}
 
 export class ValidationError extends DefaultError {
   constructor(errors, object) {
