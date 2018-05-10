@@ -1,5 +1,7 @@
 import uuid from 'uuid';
 import { omit } from 'ramda';
+import onFinished from 'on-finished';
+import onHeaders from 'on-headers';
 import { DomainError, ValidationError } from '../errors';
 
 export function addRequestIdMiddleware() {
@@ -40,32 +42,38 @@ export function errorHandlerMiddleware(logger) {
 
 export function logRequestMiddleware(logger) {
   return function logRequest(req, res, next) {
+    const startTime = Date.now();
+    let responseTime;
+    onHeaders(res, () => {
+      responseTime = Date.now() - startTime;
+    });
+    onFinished(res, () => {
+      const message = `${res.statusCode} ${req.method} ${req.originalUrl}`;
+      const data = {
+        requestId: req.requestId,
+        method: req.method,
+        url: req.originalUrl,
+        statusCode: res.statusCode,
+        headers: omit(['cookie', 'authorization'], req.headers),
+        responseTime,
+      };
+      if (res.statusCode === 500) {
+        logger.error(message, data);
+      } else {
+        logger.info(message, data);
+      }
+    });
     next();
-    const message = `${res.statusCode} ${req.method} ${req.originalUrl}`;
-    const data = {
-      requestId: req.requestId,
-      method: req.method,
-      url: req.originalUrl,
-      statusCode: res.statusCode,
-      headers: omit(['cookie'], req.headers),
-    };
-    if (res.statusCode === 500) {
-      logger.error(message, data);
-    } else {
-      logger.info(message, data);
-    }
   };
 }
 
 export function notFoundMiddleware() {
-  return function notFound(req, res, next) {
+  return function notFound(req, res) {
     if (!res.headersSent) {
       res.status(404).json({
         error: `${req.method} ${req.originalUrl}: Not found`,
       });
     }
-
-    return next();
   };
 }
 

@@ -29,6 +29,8 @@
     "es6-error": "^4.1.1",
     "fetch-cookie": "^0.7.0",
     "isomorphic-fetch": "^2.2.1",
+    "on-finished": "^2.3.0",
+    "on-headers": "^1.0.1",
     "ramda": "^0.25.0",
     "tough-cookie": "^2.3.3",
     "uuid": "^3.2.1",
