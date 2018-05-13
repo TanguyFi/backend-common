@@ -1,4 +1,4 @@
-import { assocPath } from 'ramda';
+import { assocPath, curry } from 'ramda';
 import { InternalError, ValidationError } from './errors';
 
 /*
@@ -47,6 +47,8 @@ export function assertTest(schema, object) {
   return value;
 }
 
-export function format(schema, object) {
+function formatObject(schema, object) {
   return assertInternal(schema, object);
 }
+
+export const format = curry(formatObject);
