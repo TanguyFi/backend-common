@@ -26,6 +26,8 @@
     "prettier": "1.10.2"
   },
   "dependencies": {
+    "content-disposition": "^0.5.2",
+    "content-type": "^1.0.4",
     "es6-error": "^4.1.1",
     "fetch-cookie": "^0.7.0",
     "isomorphic-fetch": "^2.2.1",
