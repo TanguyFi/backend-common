@@ -6,7 +6,18 @@ function serviceToRoute(serviceFunction) {
 
     if (['GET', 'DELETE'].includes(req.method)) {
       const paramNames = keys(req.params);
-      args = paramNames.length === 1 ? req.params[paramNames[0]] : req.params;
+      switch (paramNames.length) {
+        case 0:
+          args = req.body;
+          break;
+        case 1:
+          args = req.params[paramNames[0]];
+          break;
+        default:
+          args = req.params;
+      }
+    } else if (Array.isArray(req.body)) {
+      args = req.body;
     } else {
       args = {
         ...req.body,
