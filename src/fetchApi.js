@@ -7,8 +7,7 @@ import ContentType from 'content-type';
 
 import { DomainError } from './errors';
 
-const cookieJar = new CookieJar();
-const fetchWithCookie = fetchWithCookieBuilder(isoFetch, cookieJar);
+const fetchWithCookie = jar => fetchWithCookieBuilder(isoFetch, jar);
 
 async function parseJSONResponse(response) {
   const body = await response.json();
@@ -38,12 +37,14 @@ async function parseOctetStreamResponse(response) {
 }
 
 async function fetchServer(url, options) {
-  const fetch = options.cookie ? fetchWithCookie : isoFetch;
+  const fetch = options.cookieJar
+    ? fetchWithCookie(options.cookieJar)
+    : isoFetch;
   const fetchOptions = mergeDeepRight(
     {
       headers: { 'Content-Type': 'application/json' },
     },
-    omit(['cookie'], options),
+    omit(['cookieJar'], options),
   );
 
   const response = await fetch(url, fetchOptions);
@@ -59,15 +60,19 @@ async function fetchServer(url, options) {
   return response.text();
 }
 
-export function clearCookies(domain, path) {
+export function clearCookies(jar, domain, path) {
   return new Promise((resolve, reject) => {
-    cookieJar.store.removeCookies(domain, path, err => {
+    jar.store.removeCookies(domain, path, err => {
       if (err) {
         reject(err);
       }
       resolve();
     });
   });
+}
+
+export function cookieJar() {
+  return new CookieJar();
 }
 
 export default fetchServer;
