@@ -1,17 +1,29 @@
 import { keys } from 'ramda';
 
-function serviceToRoute(serviceFunction) {
+function serviceToRoute(serviceFunction, options = {}) {
   return (req, res, next) => {
+    const { withQuery = false } = options;
+    const query = withQuery ? req.query : {};
     let args;
 
     if (['GET', 'DELETE'].includes(req.method)) {
       const paramNames = keys(req.params);
       switch (paramNames.length) {
         case 0:
-          args = req.body;
+          args = {
+            ...query,
+            ...req.body,
+          };
           break;
         case 1:
-          args = req.params[paramNames[0]];
+          if (withQuery) {
+            args = {
+              ...req.params,
+              ...query,
+            };
+          } else {
+            args = req.params[paramNames[0]];
+          }
           break;
         default:
           args = req.params;
